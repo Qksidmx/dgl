@@ -1,6 +1,7 @@
 CC = g++
 AR = ar rc
 RM = rm
+#TOP_DIR= /home/skg/work/gfs
 TOP_DIR=$(shell pwd)/../..
 SRC_DIR = $(TOP_DIR)/gfs
 OBJ_DIR = $(SRC_DIR)/obj
