@@ -1,8 +1,8 @@
 CC = g++
 AR = ar rc
 RM = rm
-TOP_DIR= /home/skg/gfs
-SRC_DIR = $(TOP_DIR)/rev
+TOP_DIR=$(shell pwd)/../..
+SRC_DIR = $(TOP_DIR)/gfs
 OBJ_DIR = $(SRC_DIR)/obj
 INCLUDE_DIRS = -I$(SRC_DIR)
 SRCS := $(wildcard *.cc)
