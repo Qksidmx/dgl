@@ -24,6 +24,10 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+gfs/obj/*.o
+gfs/obj/*.d
+gfs/obj/*.d.*
+gfs/test/*.a
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
