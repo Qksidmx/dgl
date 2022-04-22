@@ -14,5 +14,9 @@ CXXFLAGS += -g -std=c++11 -Wall -DSKG_EDGE_DATA_COLUMN_STOAGE -DSKG_PROPERTIES_S
 all: $(OBJS)
 .PHONY: all
 
+# $< 表示第一个依赖文件
+# $^ 表示所有依赖文件
+# $@ 表示目标文件
+
 $(OBJ_DIR)/%.o : %.cc 
 	$(CC) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@

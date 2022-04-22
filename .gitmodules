@@ -4,3 +4,9 @@
 [submodule "third_party/dlpack"]
 	path = third_party/dlpack
 	url = https://github.com/dmlc/dlpack.git
+[submodule "gfs/third_party/fmt"]
+	path = gfs/third_party/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "gfs/third_party/sparsehash"]
+	path = gfs/third_party/sparsehash
+	url = https://github.com/sparsehash/sparsehash

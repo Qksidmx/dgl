@@ -52,7 +52,7 @@ $(OBJ_DIR)/%.o : %.cc
 	$(CC) $(CXXFLAGS) $(INCLUDE_DIRS) -c $< -o $@
 
 %: %.cc $(LIB_TRGT)
-	$(CC) $(CXXFLAGS) $(INCLUDE_DIRS) -o $@ $< $(LIB_TRGT) $(LIB_DEP)
+	$(CC) $(CXXFLAGS) $(INCLUDE_DIRS) -o $@ $< $(LIB_TRGT)
 
 lib: sub_dir 
 	$(AR) $(LIB_TRGT) $(shell find $(OBJ_DIR) -type f \( -iname "*.o" ! -iname "lg.o" ! -iname "nbr.o" \))
