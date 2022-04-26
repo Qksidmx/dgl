@@ -75,6 +75,12 @@ namespace skg {
                     SkgDB **pDB);
 
         /**
+         * 
+         */
+	virtual 
+        std::shared_ptr<IDEncoder> GetIDEncoder() const = 0;
+
+        /**
          * 打开分布式版本, 与 Master 通讯的 Client 逻辑
          * Options 中传递 Master 的 IP:Port
          */

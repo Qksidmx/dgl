@@ -332,6 +332,8 @@ namespace skg {
         }
         return s;
     }
+
+
     /*Status SkgDB::OpenRemote(const std::string &name, const Options &options, SkgDB **pDB) {
         // 检查 db-name 不含特殊字符
         if (!StringUtils::IsValidName(name) || name.empty()) {

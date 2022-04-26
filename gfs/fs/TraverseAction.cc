@@ -23,7 +23,9 @@ Status TraverseAction::get_neighbors(VertexQueryResult* vqr_ptr, std::string id,
     } else if (direction == 'o') {
         s = m_db->GetOutVertices(vreq, vqr_ptr);
     } else if (direction == 'b') {
-        s = m_db->GetBothVertices(vreq, vqr_ptr);
+        //s = m_db->GetBothVertices(vreq, vqr_ptr);
+	s = skg::Status::NotImplement("the \'b\' option in searching is not well defined");
+	SKG_LOG_WARNING("Retrieved {}\'s neighbor failed with message {}!", id, s.ToString());
     }
     return s;
 }
@@ -39,7 +41,9 @@ Status TraverseAction::get_edges(EdgesQueryResult* eqr, std::string id,
     } else if (direction == 'o') {
         s = m_db->GetOutEdges(vreq, eqr);
     } else if (direction == 'b') {
-        s = m_db->GetBothEdges(vreq, eqr);
+        //s = m_db->GetBothEdges(vreq, eqr);
+	s = skg::Status::NotImplement("the \'b\' option in searching is not well defined");
+	SKG_LOG_WARNING("Retrieved {}\'s neighbor failed with message {}!", id, s.ToString());
     }
     return s; 
 }
@@ -196,10 +200,24 @@ Status TraverseAction::k_out(const TraverseRequest& traverse_req,
                             label_set.end()) {
                     continue;
                 }
-                PathVertex pv(eqr.GetDstVertexLabel(&s),eqr.GetDstVertex(&s));
-                e_visited->push_back(
-                        PVpair(pv_level[cur][j], pv, eqr.GetLabel(&s), ColumnDescriptorUtils::SerializePropList(eqr))
-                        );
+	    //std::cout<<eqr.GetSrcVertexLabel(&s)<<":"<<eqr.GetSrcVertex(&s)<<std::endl;
+	    //std::cout<<eqr.GetDstVertexLabel(&s)<<":"<<eqr.GetDstVertex(&s)<<std::endl;
+                PathVertex pv;
+		if ( traverse_req.direction=='o' )
+		{
+                    pv=PathVertex(eqr.GetDstVertexLabel(&s),eqr.GetDstVertex(&s));
+                    //PathVertex pv(eqr.GetDstVertexLabel(&s),eqr.GetDstVertex(&s));
+                    e_visited->push_back(
+                            PVpair(pv_level[cur][j], pv, eqr.GetLabel(&s), ColumnDescriptorUtils::SerializePropList(eqr))
+                            );
+		}
+		else
+		{
+                    pv=PathVertex(eqr.GetSrcVertexLabel(&s),eqr.GetSrcVertex(&s));
+                    e_visited->push_back(
+                            PVpair(pv, pv_level[cur][j], eqr.GetLabel(&s), ColumnDescriptorUtils::SerializePropList(eqr))
+                            );
+		}
                 if (e_visited->size() >= (size_t) nlimit)
                     return Status::OK();
 

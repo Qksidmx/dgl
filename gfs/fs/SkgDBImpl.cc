@@ -700,7 +700,8 @@ Status SkgDBImpl::RecoverHandlers(const MetaShardInfo &meta_shard_info) {
         return num_edges;
     }
 
-    std::shared_ptr<IDEncoder> SkgDBImpl::GetIDEncoder() const {
+    std::shared_ptr<IDEncoder> SkgDBImpl::GetIDEncoder() const 
+    {
         return m_id_encoder;
     }
 

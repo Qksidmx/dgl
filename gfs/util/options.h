@@ -134,6 +134,9 @@ public:
     // 如果非空, 则会存储在制定的文件夹下.
     std::string wal_dir = "";
 
+    int nlimit = 50000;
+
+
 public:
     size_t init_shard_size_mb() const;
 
