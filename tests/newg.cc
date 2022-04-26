@@ -1,4 +1,4 @@
-#include "SkgGraph.h"
+#include "graph/skg_graph.h"
 
 
 
