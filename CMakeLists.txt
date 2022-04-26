@@ -16,9 +16,15 @@ endif()
 include_directories("include")
 include_directories("third_party/dlpack/include")
 include_directories("third_party/dmlc-core/include")
+include_directories("src")
+include_directories("gfs")
+
+# add sub project
+add_subdirectory("gfs")
 
 # initial variables
-set(DGL_LINKER_LIBS "")
+set(CMAKE_CXX_FLAGS "-DSKG_EDGE_DATA_COLUMN_STOAGE -DSKG_PROPERTIES_SUPPORT_NULL -D_FILE_OFFSET_BITS=64 -DDB_ADAPTER -DSKG_DISABLE_COMPRESSION -DSKG_PREPROCESS_DYNAMIC_EDGE -DUSE_STL_PRIORITY_QUEUE -DSKG_SUPPORT_THREAD_LOCAL -DSKG_QUERY_USE_MT -DSKG_REQ_VAR_PROP -D_SKGNET_STANDALONE_ -DROCKSDB_USING_THREAD_STATUS ${CMAKE_CXX_FLAGS}")
+set(DGL_LINKER_LIBS env fmt fs metrics monitoring util threadpool)
 set(DGL_RUNTIME_LINKER_LIBS "")
 
 # Generic compilation options
@@ -51,13 +57,14 @@ endif(MSVC)
 
 # Source file lists
 file(GLOB CORE_SRCS src/graph/*.cc src/*.cc src/scheduler/*.cc)
-
 file(GLOB RUNTIME_SRCS src/runtime/*.cc)
 
-
 add_library(dgl SHARED ${CORE_SRCS} ${RUNTIME_SRCS})
+add_executable(newg tests/newg.cc)
 
 target_link_libraries(dgl ${DGL_LINKER_LIBS} ${DGL_RUNTIME_LINKER_LIBS})
+target_link_libraries(newg ${DGL_LINKER_LIBS})
 
 # Installation rules
 install(TARGETS dgl DESTINATION lib${LIB_SUFFIX})
+

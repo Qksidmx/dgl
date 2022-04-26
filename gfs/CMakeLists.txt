@@ -23,41 +23,51 @@ file(GLOB MONITORING_SRCS monitoring/*.cc)
 file(GLOB UTIL_SRCS util/*.cc)
 file(GLOB THREADPOOL_SRCS util/threadpool/*.cc)
 
-# build lib
-add_library(env STATIC ${ENV_SRCS})
-add_library(fmt STATIC ${FMT_SRCS})
-add_library(fs STATIC ${FS_SRCS})
-add_library(metrics STATIC ${METRICS_SRCS})
-add_library(monitoring STATIC ${MONITORING_SRCS})
-add_library(util STATIC ${UTIL_SRCS})
-add_library(threadpool STATIC ${THREADPOOL_SRCS})
+# build shared lib
+add_library(env SHARED ${ENV_SRCS})
+add_library(fmt SHARED ${FMT_SRCS})
+add_library(fs SHARED ${FS_SRCS})
+add_library(metrics SHARED ${METRICS_SRCS})
+add_library(monitoring SHARED ${MONITORING_SRCS})
+add_library(util SHARED ${UTIL_SRCS})
+add_library(threadpool SHARED ${THREADPOOL_SRCS})
+
+# build static lib for build libgfs.a
+#add_library(env STATIC ${ENV_SRCS})
+#add_library(fmt STATIC ${FMT_SRCS})
+#add_library(fs STATIC ${FS_SRCS})
+#add_library(metrics STATIC ${METRICS_SRCS})
+#add_library(monitoring STATIC ${MONITORING_SRCS})
+#add_library(util STATIC ${UTIL_SRCS})
+#add_library(threadpool STATIC ${THREADPOOL_SRCS})
+
 target_link_libraries(threadpool monitoring)
 
 ####### use ar put all static lib to libgfs.a, include libfmt.a #######
-add_custom_command(OUTPUT libgfs.a
-    COMMAND ar x $<TARGET_FILE:env>
-    COMMAND ar x $<TARGET_FILE:fmt>
-    COMMAND ar x $<TARGET_FILE:fs>
-    COMMAND ar x $<TARGET_FILE:metrics>
-    COMMAND ar x $<TARGET_FILE:monitoring>
-    COMMAND ar x $<TARGET_FILE:util>
-    COMMAND ar x $<TARGET_FILE:threadpool>
-    COMMAND ar rc ${LIBGFS_PATH} *.o
-    COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/*.o
-    DEPENDS ${DEP_LIBS}
-)
-add_custom_target(_any ALL DEPENDS libgfs.a)
-add_library(libgfs STATIC IMPORTED GLOBAL)
-set_target_properties(libgfs
-    PROPERTIES
-    IMPORTED_LOCATION ${LIBGFS_PATH}
-)
+#add_custom_command(OUTPUT libgfs.a
+#    COMMAND ar x $<TARGET_FILE:env>
+#    COMMAND ar x $<TARGET_FILE:fmt>
+#    COMMAND ar x $<TARGET_FILE:fs>
+#    COMMAND ar x $<TARGET_FILE:metrics>
+#    COMMAND ar x $<TARGET_FILE:monitoring>
+#    COMMAND ar x $<TARGET_FILE:util>
+#    COMMAND ar x $<TARGET_FILE:threadpool>
+#    COMMAND ar rc ${LIBGFS_PATH} *.o
+#    COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/*.o
+#    DEPENDS ${DEP_LIBS}
+#)
+#add_custom_target(_any ALL DEPENDS libgfs.a)
+#add_library(libgfs STATIC IMPORTED GLOBAL)
+#set_target_properties(libgfs
+#    PROPERTIES
+#    IMPORTED_LOCATION ${LIBGFS_PATH}
+#)
 ####### finish build libgfs.a #######
 
 # build executable artifact for test
-add_executable(newg test/newg.cc)
+#add_executable(newg test/newg.cc)
 
 # 因make多线程编译时，没有正确处理libgfs依赖关系，暂时只能逐个link所有小lib
 # target_link_libraries(newg libgfs)
-target_link_libraries(newg ${DEP_LIBS})
+#target_link_libraries(newg ${DEP_LIBS})
 
