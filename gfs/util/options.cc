@@ -80,5 +80,6 @@ namespace skg {
         // 建表的文件夹
         default_db_dir = std::string {get_option_string("db_dir", "db/")};
 //        SKG_LOG_INFO("set db_dir={}", default_db_dir);
+        nlimit = 1 << 30;
     }
 }
