@@ -1,3 +1,5 @@
+#ifndef _H_SKG_GRAPH
+#define _H_SKG_GRAPH
 #include <future>
 #include <thread>
 #include <algorithm>
@@ -134,3 +136,4 @@ class SkgGraph{
 	    Status s;
 };
 
+#endif

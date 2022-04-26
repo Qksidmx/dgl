@@ -17,6 +17,7 @@
 #include "c_runtime_api.h"
 #include "module.h"
 #include "ndarray.h"
+#include "graph/skg_graph.h"
 
 // Whether use DGL runtime in header only mode.
 #ifndef DGL_RUNTIME_HEADER_ONLY
@@ -425,6 +426,15 @@ class DGLPODValue_ {
     DGL_CHECK_TYPE_CODE(type_code_, kDGLContext);
     return value_.v_ctx;
   }
+
+  operator SkgGraph*() const {
+      return static_cast<SkgGraph*>(value_.v_handle);
+  }
+
+  operator const char*() const {
+      return value_.v_str;
+  }
+
   template<typename TExtension>
   const TExtension& AsExtension() const {
     CHECK_LT(type_code_, kExtEnd);

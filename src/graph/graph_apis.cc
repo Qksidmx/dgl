@@ -6,6 +6,7 @@
 #include <dgl/graph.h>
 #include <dgl/graph_op.h>
 #include "../c_api_common.h"
+#include "graph/skg_graph.h"
 
 using dgl::runtime::DGLArgs;
 using dgl::runtime::DGLArgValue;
@@ -60,6 +61,40 @@ DGL_REGISTER_GLOBAL("graph_index._CAPI_DGLGraphCreate")
     bool multigraph = static_cast<bool>(args[0]);
     GraphHandle ghandle = new Graph(multigraph);
     *rv = ghandle;
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphCreate")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* g = new SkgGraph();
+    *rv = g;
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphFree")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
+    delete gptr;
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphAddEdge")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
+    const char* p1 = static_cast<const char*>(args[1]);
+    const char* p2 = static_cast<const char*>(args[2]);
+    gptr->AddEdge(p1, p2);
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphPrInNbr")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
+    const char* p1 = static_cast<const char*>(args[1]);
+    gptr->PrInNbr(p1);
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphPrOutNbr")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
+    const char* p1 = static_cast<const char*>(args[1]);
+    gptr->PrOutNbr(p1);
   });
 
 DGL_REGISTER_GLOBAL("graph_index._CAPI_DGLGraphFree")
