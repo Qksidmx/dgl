@@ -28,6 +28,9 @@ class EntityClassify(BaseRGCN):
             features = features.cuda()
         return features
 
+    """
+    这三个构建层的函数基本一样，详见layers.RGCNBasisLayer 
+    """
     def build_input_layer(self):
         return RGCNLayer(self.num_nodes, self.h_dim, self.num_rels, self.num_bases,
                          activation=F.relu, is_input_layer=True)
@@ -77,12 +80,12 @@ def main(args):
     g.edata.update({'type': edge_type, 'norm': edge_norm})
 
     # create model
-    model = EntityClassify(len(g),
-                           args.n_hidden,
+    model = EntityClassify(len(g),  # 节点数
+                           args.n_hidden, # h维度
                            num_classes,
-                           num_rels,
-                           num_bases=args.n_bases,
-                           num_hidden_layers=args.n_layers - 2,
+                           num_rels, # relation 数目
+                           num_bases=args.n_bases, # 过滤权重矩阵的数目
+                           num_hidden_layers=args.n_layers - 2, # 隐藏层数目 减2表示减去输入和输出层
                            dropout=args.dropout,
                            use_cuda=use_cuda)
 
