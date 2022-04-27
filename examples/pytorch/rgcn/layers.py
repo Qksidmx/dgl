@@ -10,12 +10,14 @@ class RGCNLayer(nn.Module):
         self.activation = activation
         self.self_loop = self_loop
 
+        # bias
         if self.bias == True:
             self.bias = nn.Parameter(torch.Tensor(out_feat))
             nn.init.xavier_uniform_(self.bias,
                                     gain=nn.init.calculate_gain('relu'))
 
         # weight for self loop
+        # 如果有self loop，则创建self_W矩阵
         if self.self_loop:
             self.loop_weight = nn.Parameter(torch.Tensor(in_feat, out_feat))
             nn.init.xavier_uniform_(self.loop_weight,
@@ -31,11 +33,18 @@ class RGCNLayer(nn.Module):
         raise NotImplementedError
 
     def forward(self, g):
+
+        """
+        这个为rgcn真正forward的地方
+        """
+
+        # ① 计算self_message， 即是节点自身乘以self_W
         if self.self_loop:
             loop_message = torch.mm(g.ndata['h'], self.loop_weight)
             if self.dropout is not None:
                 loop_message = self.dropout(loop_message)
-
+                
+        # ②核心的前向传播处理，在子类实现
         self.propagate(g)
 
         # apply bias and activation
@@ -52,18 +61,33 @@ class RGCNLayer(nn.Module):
 class RGCNBasisLayer(RGCNLayer):
     def __init__(self, in_feat, out_feat, num_rels, num_bases=-1, bias=None,
                  activation=None, is_input_layer=False):
+        """
+        ①父类初始化，就是最基本的初始化W和b
+        模型的forward是继承自父类
+        """
         super(RGCNBasisLayer, self).__init__(in_feat, out_feat, bias, activation)
         self.in_feat = in_feat
         self.out_feat = out_feat
         self.num_rels = num_rels
         self.num_bases = num_bases
         self.is_input_layer = is_input_layer
+
+
+
         if self.num_bases <= 0 or self.num_bases > self.num_rels:
             self.num_bases = self.num_rels
 
         # add basis weights
+        """
+        创建参数矩阵，是三维的，num_bases
+        """
         self.weight = nn.Parameter(torch.Tensor(self.num_bases, self.in_feat,
                                                 self.out_feat))
+        
+        """
+        如果 relation数更大，就再创建一个参数矩阵，在后续的propagate的时候用
+        这里现实的意义还不太清楚，需要对着论文理解下
+        """
         if self.num_bases < self.num_rels:
             # linear combination coefficients
             self.w_comp = nn.Parameter(torch.Tensor(self.num_rels,
@@ -74,6 +98,10 @@ class RGCNBasisLayer(RGCNLayer):
                                     gain=nn.init.calculate_gain('relu'))
 
     def propagate(self, g):
+
+        """
+        这个if判断和上面对应，若成立就将weight乘一下，作为新的W
+        """
         if self.num_bases < self.num_rels:
             # generate all weights from bases
             weight = self.weight.view(self.num_bases,
@@ -83,6 +111,7 @@ class RGCNBasisLayer(RGCNLayer):
         else:
             weight = self.weight
 
+        
         if self.is_input_layer:
             def msg_func(edges):
                 # for input layer, matrix multiply can be converted to be
@@ -96,7 +125,9 @@ class RGCNBasisLayer(RGCNLayer):
                 msg = torch.bmm(edges.src['h'].unsqueeze(1), w).squeeze()
                 msg = msg * edges.data['norm']
                 return {'msg': msg}
-
+        
+        # 更新全局节点
+        # TODO： 理解msg_func
         g.update_all(msg_func, fn.sum(msg='msg', out='h'), None)
 
 class RGCNBlockLayer(RGCNLayer):

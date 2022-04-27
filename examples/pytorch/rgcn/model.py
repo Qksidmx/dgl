@@ -20,6 +20,14 @@ class BaseRGCN(nn.Module):
         self.features = self.create_features()
 
     def build_model(self):
+
+        """
+        模型抽象为三层：输入层i2h、隐藏层h2h、输出层h2o
+        
+        分别使用子类实现的build_input_layer、build_hidden_layer、build_output_layer函数构建
+        详见EntityClassify类
+        """
+        
         self.layers = nn.ModuleList()
         # i2h
         i2h = self.build_input_layer()
