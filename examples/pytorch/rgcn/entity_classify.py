@@ -84,7 +84,7 @@ def main(args):
                            args.n_hidden, # h维度
                            num_classes,
                            num_rels, # relation 数目
-                           num_bases=args.n_bases, # 过滤权重矩阵的数目
+                           num_bases=args.n_bases, # 基础权重矩阵数目
                            num_hidden_layers=args.n_layers - 2, # 隐藏层数目 减2表示减去输入和输出层
                            dropout=args.dropout,
                            use_cuda=use_cuda)
