@@ -318,6 +318,17 @@ namespace skg {
 	    }
 	}
 #endif
+	//the following code are extracted from SkgDBImpl_Recover.cc::26
+        s = MetadataFileHandler::IsFilesExist(basedir);
+        if (!s.ok()) { return s; }
+
+        // 异构边属性列的元数据
+        s = MetadataFileHandler::ReadEdgeAttrConf(basedir, &(impl->m_edge_attr));
+        if (!s.ok()) 
+	{
+            return Status::Corruption("edge properties:" + s.ToString());
+        }
+
         MetaShardInfo meta_shard_info;
 	s = MetadataFileHandler::ReadLSMIntervals(basedir, &meta_shard_info);
         if (!s.ok()) {

@@ -39,7 +39,7 @@ class SkgGraph(object):
         num : int
             Number of nodes to be added.
         """
-        _CAPI_DGLGraphAddVertices(self._handle, num);
+        #_CAPI_DGLGraphAddVertices(self._handle, num);
         self._cache.clear()
 
     def add_edge(self, u, v):
@@ -52,13 +52,20 @@ class SkgGraph(object):
         v : int
             The dst node.
         """
+        if isinstance(u,str) != True:
+            u=str(u)
+        if isinstance(v,str) != True:
+            v=str(v)
         _CAPI_SKGGraphAddEdge(self._handle, u, v);
 
-    def print_in_neigh(self, u):
+    def print_pred(self, u):
         _CAPI_SKGGraphPrInNbr(self._handle, u);
 
-    def print_out_neigh(self, u):
+    def print_succ(self, u):
         _CAPI_SKGGraphPrOutNbr(self._handle, u);
+
+    def print_ninfo(self, vstr="1", vlabel="device", hop=1):
+        _CAPI_SKGGraphPrNbrInfo(self._handle, vstr, vlabel, hop);
 
     def add_edges(self, u, v):
         """Add many edges.
@@ -72,7 +79,7 @@ class SkgGraph(object):
         """
         u_array = u.todgltensor()
         v_array = v.todgltensor()
-        _CAPI_DGLGraphAddEdges(self._handle, u_array, v_array)
+        _CAPI_SKGGraphAddEdges(self._handle, u_array, v_array)
         self._cache.clear()
 
     def clear(self):
@@ -636,7 +643,6 @@ class SkgGraph(object):
         nx_graph : networkx.DiGraph
             The nx graph
         """
-        self.clear()
 
         if not isinstance(nx_graph, nx.Graph):
             nx_graph = (nx.MultiDiGraph(nx_graph) if self.is_multigraph()
@@ -819,6 +825,11 @@ def disjoint_partition(graph, num_or_size_splits):
 
 def create_skg_graph():
     handle = _CAPI_SKGGraphCreate()
+    g = SkgGraph(handle)
+    return g
+
+def skg_open_gfs(db_name="default"):
+    handle = _CAPI_SKGGraphOpen(db_name)
     g = SkgGraph(handle)
     return g
 
