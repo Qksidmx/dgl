@@ -69,6 +69,13 @@ DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphCreate")
     *rv = g;
   });
 
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphOpen")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    const char* inDBName = static_cast<const char*>(args[0]);
+    SkgGraph* g = new SkgGraph(inDBName);
+    *rv = g;
+  });
+
 DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphFree")
 .set_body([] (DGLArgs args, DGLRetValue* rv) {
     SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
@@ -83,6 +90,15 @@ DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphAddEdge")
     gptr->AddEdge(p1, p2);
   });
 
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphAddEdges")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    GraphHandle ghandle = args[0];
+    SkgGraph* gptr = static_cast<SkgGraph*>(ghandle);
+    const IdArray src = IdArray::FromDLPack(CreateTmpDLManagedTensor(args[1]));
+    const IdArray dst = IdArray::FromDLPack(CreateTmpDLManagedTensor(args[2]));
+    gptr->AddEdges(src, dst);
+  });
+
 DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphPrInNbr")
 .set_body([] (DGLArgs args, DGLRetValue* rv) {
     SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
@@ -95,6 +111,15 @@ DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphPrOutNbr")
     SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
     const char* p1 = static_cast<const char*>(args[1]);
     gptr->PrOutNbr(p1);
+  });
+
+DGL_REGISTER_GLOBAL("skg_graph._CAPI_SKGGraphPrNbrInfo")
+.set_body([] (DGLArgs args, DGLRetValue* rv) {
+    SkgGraph* gptr = static_cast<SkgGraph*>(args[0]);
+    const char* vstr = static_cast<const char*>(args[1]);
+    const char* vlabel = static_cast<const char*>(args[2]);
+    int hop = static_cast<int>(args[3]);
+    gptr->PrNbrInfo(vstr,vlabel,hop);
   });
 
 DGL_REGISTER_GLOBAL("graph_index._CAPI_DGLGraphFree")

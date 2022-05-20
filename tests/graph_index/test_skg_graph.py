@@ -1,10 +1,11 @@
 import sys
-sys.path.append('../../python/build/lib')
+sys.path.insert(0,'../../python/build/lib')
 
+import argparse
 from dgl import DGLError
 from dgl.utils import toindex
 from dgl.graph_index import create_graph_index
-from dgl.skg_graph import create_skg_graph
+from dgl.skg_graph import create_skg_graph, skg_open_gfs
 import networkx as nx
 
 def test_edge_id():
@@ -154,17 +155,28 @@ def test_create_from_elist():
         print(u, v, g.edge_id(u, v)[0])
         assert g.edge_id(u, v)[0] == i
 
-def test_skg():
+def test_new_skg():
     g = create_skg_graph()
     g.add_edge("1", "2")
     g.add_edge("1","3");
     g.add_edge("1","4");
     g.add_edge("5","1");
     g.add_edge("6","1");
+    g.add_edge(7,1);
+    g.add_edge("8",1);
+    g.add_edge("1",9);
     print("All neighbors of node 1's are:")
-    g.print_in_neigh("1");
-    g.print_out_neigh("1");
+    g.print_pred("1");
+    g.print_succ("1");
+
+def test_open_skg(gname):
+    g = skg_open_gfs(gname)
 
 if __name__ == '__main__':
-    test_skg()
+    parser = argparse.ArgumentParser(description='SKG')
+    parser.add_argument("--gname", type=str, default="default", required=True,
+            help="The name of graph storage to open with.")
+    args = parser.parse_args()
+    #test_new_skg()
+    test_open_skg(args.gname)
 
